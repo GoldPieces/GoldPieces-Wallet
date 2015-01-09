@@ -1,0 +1,9 @@
+Building GoldPieces
+
+See doc/readme-qt.rst for instructions on building GoldPieces QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of GoldPieces.
+
+See doc/build-*.txt for instructions on building GoldPiecesd,
+the intended-for-services, no-graphical-interface, reference
+implementation of GoldPieces.
