@@ -39,6 +39,12 @@ bool CWalletDB::ReadAccount(const string& strAccount, CAccount& account)
     return Read(make_pair(string("acc"), strAccount), account);
 }
 
+bool CWalletDB::WriteWatchOnly(const CTxDestination &dest)
+{
+    nWalletDBUpdated++;
+    return Write(std::make_pair(std::string("watch"), CBitcoinAddress(dest).ToString()), '1');
+}
+
 bool CWalletDB::WriteAccount(const string& strAccount, const CAccount& account)
 {
     return Write(make_pair(string("acc"), strAccount), account);
@@ -276,6 +282,19 @@ ReadKeyValue(CWallet* pwallet, CDataStream& ssKey, CDataStream& ssValue,
                 if (acentry.nOrderPos == -1)
                     wss.fAnyUnordered = true;
             }
+        }
+        else if (strType == "watch")
+        {
+            std::string strAddress;
+            ssKey >> strAddress;
+            char fYes;
+            ssValue >> fYes;
+            if (fYes == '1')
+                pwallet->LoadWatchOnly(CBitcoinAddress(strAddress).Get());
+
+            // Watch-only addresses have no birthday information for now,
+            // so set the wallet birthday to the beginning of time.
+            pwallet->nTimeFirstKey = 1;
         }
         else if (strType == "key" || strType == "wkey")
         {
