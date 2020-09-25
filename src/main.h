@@ -10,7 +10,6 @@
 #include "net.h"
 #include "script.h"
 #include "scrypt.h"
-#include "zerocoin/Zerocoin.h"
 #include "hashblock.h"
 
 #include <list>
@@ -36,7 +35,7 @@ static const unsigned int MAX_ORPHAN_TRANSACTIONS = MAX_BLOCK_SIZE/100;
 static const unsigned int MAX_INV_SZ = 50000;
 static const int64_t MIN_TX_FEE = 1000;
 static const int64_t MIN_RELAY_TX_FEE = MIN_TX_FEE;
-static const int64_t MAX_MONEY = 999999999999 * COIN;
+static const int64_t MAX_MONEY = std::numeric_limits<int64_t>::max();
 static const int64_t COIN_YEAR_REWARD = 500 * CENT; // 500% per year
 static const int64_t MAX_MINT_PROOF_OF_STAKE = 5 * COIN;	// 500% annual interest
 static const int MODIFIER_INTERVAL_SWITCH = 1;
@@ -57,7 +56,6 @@ inline int64_t PastDrift(int64_t nTime)   { return nTime - 10 * 60; } // up to 1
 inline int64_t FutureDrift(int64_t nTime) { return nTime + 10 * 60; } // up to 10 minutes from the future
 
 
-extern libzerocoin::Params* ZCParams;
 extern CScript COINBASE_FLAGS;
 extern CCriticalSection cs_main;
 extern std::map<uint256, CBlockIndex*> mapBlockIndex;
