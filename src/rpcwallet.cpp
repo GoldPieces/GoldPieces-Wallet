@@ -1563,7 +1563,7 @@ public:
 
          if (mine == MINE_SPENDABLE) {
              pwalletMain->GetPubKey(keyID, vchPubKey);
-             obj.push_back(Pair("pubkey", HexStr(vchPubKey)));
+             obj.push_back(Pair("pubkey", HexStr(vchPubKey.Raw())));
              obj.push_back(Pair("iscompressed", vchPubKey.IsCompressed()));
          }
                  
@@ -1611,7 +1611,7 @@ Value validateaddress(const Array &params, bool fHelp)
         CTxDestination dest = address.Get();
         string currentAddress = address.ToString();
         ret.push_back(Pair("address", currentAddress));
-        isminetype mine = pwalletMain ? IsMine(*pwalletMain, dest) : MINE_NO;        ret.push_back(Pair("ismine", fMine));
+        isminetype mine = pwalletMain ? IsMine(*pwalletMain, dest) : MINE_NO;
         ret.push_back(Pair("ismine", mine != MINE_NO));
         if (mine != MINE_NO) {
             ret.push_back(Pair("watchonly", mine == MINE_WATCH_ONLY));
@@ -1651,9 +1651,11 @@ Value validatepubkey(const Array &params, bool fHelp)
         bool fMine = IsMine(*pwalletMain, dest);
         ret.push_back(Pair("ismine", fMine));
         ret.push_back(Pair("iscompressed", isCompressed));
-        if (fMine)
-        {
-            Object detail = boost::apply_visitor(DescribeAddressVisitor(), dest);
+        isminetype mine = pwalletMain ? IsMine(*pwalletMain, dest) : MINE_NO;        ret.push_back(Pair("ismine", fMine));
+        ret.push_back(Pair("ismine", mine != MINE_NO));
+        if (mine != MINE_NO) {
+            ret.push_back(Pair("watchonly", mine == MINE_WATCH_ONLY));
+            Object detail = boost::apply_visitor(DescribeAddressVisitor(mine), dest);
             ret.insert(ret.end(), detail.begin(), detail.end());
         }
         if (pwalletMain->mapAddressBook.count(dest))

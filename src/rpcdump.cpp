@@ -261,14 +261,14 @@ Value importaddress(const Array& params, bool fHelp)
             return Value::null;
 
         pwalletMain->MarkDirty();
-        pwalletMain->SetAddressBook(dest, strLabel, "receive");
+        pwalletMain->SetAddressBookName(dest, strLabel);
 
         if (!pwalletMain->AddWatchOnly(dest))
             throw JSONRPCError(RPC_WALLET_ERROR, "Error adding address to wallet");
 
         if (fRescan)
         {
-            pwalletMain->ScanForWalletTransactions(chainActive.Genesis(), true);
+            pwalletMain->ScanForWalletTransactions(pindexGenesisBlock, true);
             pwalletMain->ReacceptWalletTransactions();
         }
     }

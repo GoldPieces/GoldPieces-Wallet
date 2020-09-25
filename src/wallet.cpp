@@ -127,7 +127,6 @@ bool CWallet::AddWatchOnly(const CTxDestination &dest)
 
 bool CWallet::LoadWatchOnly(const CTxDestination &dest)
 {
-    LogPrintf("Loaded %s!\n", CBitcoinAddress(dest).ToString().c_str());
     return CCryptoKeyStore::AddWatchOnly(dest);
 }
 
@@ -1101,12 +1100,15 @@ void CWallet::AvailableCoins(vector<COutput> &vCoins, bool fOnlyConfirmed, const
             if (nDepth < 0)
                 continue;
 
-            for (unsigned int i = 0; i < pcoin->vout.size(); i++)
+            for (unsigned int i = 0; i < pcoin->vout.size(); i++) 
+            {
                 isminetype mine = IsMine(pcoin->vout[i]);
-                if (!(IsSpent(wtxid, i)) && mine != MINE_NO &&
+                if (!(pcoin->IsSpent(i)) && mine != MINE_NO &&
                     !IsLockedCoin((*it).first, i) && pcoin->vout[i].nValue >= nMinimumInputValue &&
                     (!coinControl || !coinControl->HasSelected() || coinControl->IsSelected((*it).first, i)))
-                    vCoins.push_back(COutput(pcoin, i, nDepth, mine & MINE_SPENDABLE));        }
+                         vCoins.push_back(COutput(pcoin, i, nDepth, mine & MINE_SPENDABLE));       
+             }
+        }
     }
 }
 
@@ -1126,9 +1128,11 @@ void CWallet::AvailableCoinsMinConf(vector<COutput> &vCoins, int nConf) const
             if (pcoin->GetDepthInMainChain() < nConf)
                 continue;
 
-            for (unsigned int i = 0; i < pcoin->vout.size(); i++)
-                if (!(pcoin->IsSpent(i)) && IsMine(pcoin->vout[i]) && pcoin->vout[i].nValue >= nMinimumInputValue)
-                    vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain()));
+            for (unsigned int i = 0; i < pcoin->vout.size(); i++) {
+                isminetype mine = IsMine(pcoin->vout[i]);
+                if (!(pcoin->IsSpent(i)) && mine != MINE_NO && pcoin->vout[i].nValue >= nMinimumInputValue)
+                    vCoins.push_back(COutput(pcoin, i, pcoin->GetDepthInMainChain(), mine & MINE_SPENDABLE));
+            }
         }
     }
 }

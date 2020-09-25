@@ -1551,7 +1551,6 @@ isminetype IsMine(const CKeyStore &keystore, const CTxDestination &dest)
         return MINE_WATCH_ONLY;
     return MINE_NO;
 }
-}
 
 isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
 {
@@ -1567,7 +1566,7 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
     switch (whichType)
     {
     case TX_NONSTANDARD:
-        break
+        break;
     case TX_PUBKEY:
         keyID = CPubKey(vSolutions[0]).GetID();
         if (keystore.HaveKey(keyID))
@@ -1586,7 +1585,7 @@ isminetype IsMine(const CKeyStore &keystore, const CScript& scriptPubKey)
     {
         CScriptID scriptID = CScriptID(uint160(vSolutions[0]));
         CScript subscript;
-        if (keystore.GetCScript(scriptID, subscript)) {            return false;
+        if (keystore.GetCScript(scriptID, subscript)) {
             isminetype ret = IsMine(keystore, subscript);
              if (ret)
                 return ret;

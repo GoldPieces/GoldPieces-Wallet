@@ -5,14 +5,15 @@
 #ifndef BITCOIN_KEYSTORE_H
 #define BITCOIN_KEYSTORE_H
 
+#include "key.h"
 #include "crypter.h"
 #include "sync.h"
-#include "script.h"     // for CNoDestination
 #include <boost/signals2/signal.hpp>
 #include <boost/variant.hpp>
 
 
 class CScript;
+class CNoDestination;
 
 /** A txout script template with a specific destination. It is either:
  *  * CNoDestination: no destination set
@@ -49,6 +50,7 @@ public:
     // Support for Watch-only addresses
     virtual bool AddWatchOnly(const CTxDestination &dest) =0;
     virtual bool HaveWatchOnly(const CTxDestination &dest) const =0;
+
 
     virtual bool GetSecret(const CKeyID &address, CSecret& vchSecret, bool &fCompressed) const
     {
